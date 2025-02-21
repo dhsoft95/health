@@ -77,12 +77,12 @@
 
                             <li class="nav-item">
                                 <a href="#" class="nav-link {{ request()->routeIs('resources.*') ? 'active' : '' }}">Resources <i class="fas fa-plus"></i></a>
-                                {{-- <ul class="dropdown-menu">
-                                    <li class="nav-item"><a href="{{ route('resources.guides') }}" class="nav-link {{ request()->routeIs('resources.guides') ? 'active' : '' }}">Guides</a></li>
-                                    <li class="nav-item"><a href="{{ route('resources.ebooks') }}" class="nav-link {{ request()->routeIs('resources.ebooks') ? 'active' : '' }}">eBooks</a></li>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-item"><a href="{{ route('resources.index') }}" class="nav-link {{ request()->routeIs('resources.guides') ? 'active' : '' }}">All</a></li>
+                                    {{-- <li class="nav-item"><a href="{{ route('resources.ebooks') }}" class="nav-link {{ request()->routeIs('resources.ebooks') ? 'active' : '' }}">eBooks</a></li>
                                     <li class="nav-item"><a href="{{ route('resources.articles') }}" class="nav-link {{ request()->routeIs('resources.articles') ? 'active' : '' }}">Articles</a></li>
-                                    <li class="nav-item"><a href="{{ route('resources.case-studies') }}" class="nav-link {{ request()->routeIs('resources.case-studies') ? 'active' : '' }}">Case Studies</a></li>
-                                </ul> --}}
+                                    <li class="nav-item"><a href="{{ route('resources.case-studies') }}" class="nav-link {{ request()->routeIs('resources.case-studies') ? 'active' : '' }}">Case Studies</a></li> --}}
+                                </ul>
                             </li>
 
                             <li class="nav-item">
