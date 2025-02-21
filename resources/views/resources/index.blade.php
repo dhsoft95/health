@@ -1,5 +1,5 @@
 <!-- resources/views/resources/index.blade.php -->
-@extends('layouts.app')
+@extends('Layouts.app')
 
 @section('content')
 <section class="blog-area ptb-100">

@@ -225,7 +225,7 @@ class ServiceController extends Controller
 
         $faqs = [
             [
-                'question' => 'How do I schedule an appointment?',
+                'question' => 'How do I schedule an appointments?',
                 'answer' => 'You can schedule either a teleconsultation or home visit with our licensed consultants through our online booking system or by calling our office.'
             ],
             [

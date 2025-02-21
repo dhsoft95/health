@@ -37,7 +37,14 @@ Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
 // Appointment Route
-Route::get('/appointment', [AppointmentController::class, 'index'])->name('appointment');
+Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
 
 
 Route::get('/resources/{resource}', [ResourceController::class, 'show'])->name('resources.show');
+
+
+// In routes/web.php
+Route::get('/appointments/create', [AppointmentController::class, 'create'])
+    ->name('appointments.create');
+Route::post('/appointments', [AppointmentController::class, 'store'])
+    ->name('appointments.store');

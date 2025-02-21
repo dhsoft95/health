@@ -13,10 +13,11 @@ use Illuminate\Support\Facades\DB;
 class MostViewedResources extends BaseWidget
 {
     protected int | string | array $columnSpan = 'full';
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 1;
     protected static ?string $heading = 'Most Viewed Resources';
     protected static ?string $pollingInterval = '30s';
     protected static ?string $maxHeight = '400px';
+
 
     public function table(Table $table): Table
     {

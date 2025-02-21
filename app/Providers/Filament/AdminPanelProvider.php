@@ -2,6 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\AppointmentStats;
+use App\Filament\Widgets\MostViewedResources;
+use App\Filament\Widgets\ResourceStatsOverview;
+use App\Filament\Widgets\ResourceTrend;
+use App\Filament\Widgets\ResourceViewsStats;
+use App\Filament\Widgets\UpcomingAppointments;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -35,10 +41,16 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+//            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-//                Widgets\AccountWidget::class,
-//                Widgets\FilamentInfoWidget::class,
+                ResourceStatsOverview::class,
+                AppointmentStats::class,
+                ResourceViewsStats::class,
+                MostViewedResources::class,
+                UpcomingAppointments::class,
+                ResourceTrend::class,
+
+
             ])
             ->middleware([
                 EncryptCookies::class,

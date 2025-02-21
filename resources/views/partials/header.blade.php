@@ -90,7 +90,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+{{--                                <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>--}}
                             </li>
                         </ul>
 
@@ -109,7 +109,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('appointment') }}" class="btn btn-primary">Schedule Appointment</a>
+                            <a href="{{ route('appointments') }}" class="btn btn-primary">Schedule Appointment</a>
                         </div>
                     </div>
                 </nav>

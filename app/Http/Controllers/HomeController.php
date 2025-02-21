@@ -53,7 +53,7 @@ class HomeController extends Controller
                 'subtitle' => 'Mental Health Care From Anywhere',
                 'description' => 'Access on-demand, evidence-based mental health treatment designed to empower individuals. Connect with licensed therapists and psychiatric providers through teleconsultation or home visits.',
                 'image' => 'assets/img/slider/slide1.jpg',
-                'link' => route('appointment')
+                'link' => route('appointments')
             ],
             [
                 'title' => 'Expert Care for Your Mental Well-being',
@@ -109,7 +109,7 @@ class HomeController extends Controller
     }
 
     /**
-     * Handle appointment scheduling request
+     * Handle appointments scheduling request
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
@@ -128,14 +128,14 @@ class HomeController extends Controller
         ]);
 
         try {
-            // Process appointment scheduling
+            // Process appointments scheduling
             // Send confirmation email
             // Notify relevant staff
 
-            return redirect()->back()->with('success', 'Your appointment has been scheduled successfully. We will contact you shortly to confirm.');
+            return redirect()->back()->with('success', 'Your appointments has been scheduled successfully. We will contact you shortly to confirm.');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'There was an issue scheduling your appointment. Please try again or contact us directly.')
+                ->with('error', 'There was an issue scheduling your appointments. Please try again or contact us directly.')
                 ->withInput();
         }
     }
