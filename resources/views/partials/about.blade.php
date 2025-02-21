@@ -25,7 +25,7 @@
                         </ul>
 
                         <div class="about-btn">
-                            <a href="appointment.html" class="btn btn-primary">Schedule Appointment <i class="fas fa-calendar-check"></i></a>
+                            <a href="{{ route('appointments.create') }}" class="btn btn-primary">Schedule Appointment <i class="fas fa-calendar-check"></i></a>
                         </div>
                     </div>
                 </div>

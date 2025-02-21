@@ -109,7 +109,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('appointments') }}" class="btn btn-primary">Schedule Appointment</a>
+                            <a href="{{ route('appointments.create') }}" class="btn btn-primary">Schedule Appointment</a>
                         </div>
                     </div>
                 </nav>
