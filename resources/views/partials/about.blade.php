@@ -7,7 +7,6 @@
                         <img src="assets/img/about-therapy-session.jpg" alt="Mental health care professionals providing therapy">
                     </div>
                 </div>
-
                 <div class="col-lg-6 col-md-12 p-0">
                     <div class="about-content">
                         <span>About Us</span>

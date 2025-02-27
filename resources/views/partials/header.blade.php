@@ -20,7 +20,7 @@
                         <div class="lang-select">
                             <select>
                                 <option>English</option>
-                                <option>Spanish</option>
+{{--                                <option>Spanish</option>--}}
                             </select>
                         </div>
                     </div>

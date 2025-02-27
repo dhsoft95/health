@@ -4,6 +4,8 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\NewsletterTrackingController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TherapyController;
@@ -48,3 +50,10 @@ Route::get('/appointments/create', [AppointmentController::class, 'create'])
     ->name('appointments.create');
 Route::post('/appointments', [AppointmentController::class, 'store'])
     ->name('appointments.store');
+Route::get('/appointments/thank-you', [AppointmentController::class, 'thankYou'])
+    ->name('appointments.thank-you');
+
+
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::post('/newsletter/unsubscribe', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::get('/newsletter/track/{id}', [NewsletterTrackingController::class, 'trackOpen'])->name('newsletter.track-open');
