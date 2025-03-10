@@ -101,13 +101,10 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Add Appointment Button -->
             <div class="text-center mt-4">
-                <a href="" class="btn btn-primary btn-lg">Schedule a Teen Session</a>
+                <a href="/appointments/create" class="btn btn-primary btn-lg">Schedule a Teen Session</a>
             </div>
         </div>
-
         <div class="shape3"><img src="assets/img/shape/3.png" class="wow fadeInLeft" alt="decorative shape"></div>
     </section>
 @endsection

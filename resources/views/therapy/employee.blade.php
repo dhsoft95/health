@@ -104,7 +104,7 @@
 
             <!-- Add Appointment Button -->
             <div class="text-center mt-4">
-                <a href="appointment.html" class="btn btn-primary btn-lg">Schedule a Consultation</a>
+                <a href="/appointments/create" class="btn btn-primary btn-lg">Schedule a Consultation</a>
             </div>
         </div>
 

@@ -104,7 +104,8 @@
 
             <!-- Add Appointment Button -->
             <div class="text-center mt-4">
-                <a href="" class="btn btn-primary btn-lg">Schedule Your First Session</a>
+
+                <a href="/appointments/create" class="btn btn-primary btn-lg">Schedule Your First Session</a>
             </div>
         </div>
 

@@ -106,12 +106,7 @@
                                     <i class="flaticon-clock"></i>
                                 </div>
                                 <label for="preferred_time">Preferred Time</label>
-                                <select class="form-control" id="preferred_time" name="preferred_time" required>
-                                    <option value="">Select preferred time</option>
-                                    <option value="morning">Morning (8AM - 12PM)</option>
-                                    <option value="afternoon">Afternoon (12PM - 4PM)</option>
-                                    <option value="evening">Evening (4PM - 8PM)</option>
-                                </select>
+                                <input type="text" class="form-control" placeholder="Select time" id="preferred_time" name="preferred_time" required>
                                 <div class="invalid-feedback" id="preferred_time-error"></div>
                             </div>
                         </div>
@@ -353,170 +348,222 @@
         }
     </style>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/plugins/confirmDate/confirmDate.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/plugins/confirmDate/confirmDate.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Set minimum date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('preferred_date').min = today;
+            // Initialize form with native validation disabled
+            const form = document.getElementById('quick-appointment-form');
+            form.setAttribute('novalidate', true);
 
-            // Toggle insurance fields
+            // Date and time initialization
+            const today = new Date();
+            document.getElementById('preferred_date').min = today.toISOString().split('T')[0];
+
+            // Flatpickr time picker - FIXED TIME FORMAT
+            const timePicker = flatpickr('#preferred_time', {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "h:i A", // Changed from "h:i:S K" to "h:i A" to match validation regex
+                minuteIncrement: 15,
+                time_24hr: false,
+                plugins: [new confirmDatePlugin({
+                    confirmIcon: "<i class='flaticon-checkmark'></i>",
+                    confirmText: "OK ",
+                    showAlways: true,
+                    theme: "light"
+                })]
+            });
+
+            // Insurance fields toggle
             const hasInsuranceCheckbox = document.getElementById('has_insurance');
             const insuranceFields = document.querySelectorAll('.insurance-fields');
 
-            hasInsuranceCheckbox.addEventListener('change', toggleInsuranceFields);
-
             function toggleInsuranceFields() {
-                const display = hasInsuranceCheckbox.checked ? 'block' : 'none';
+                const isRequired = hasInsuranceCheckbox.checked;
                 insuranceFields.forEach(field => {
-                    field.style.display = display;
-
-                    // Make fields required if insurance is checked
-                    const inputs = field.querySelectorAll('input');
-                    inputs.forEach(input => {
-                        input.required = hasInsuranceCheckbox.checked;
+                    field.style.display = isRequired ? 'block' : 'none';
+                    field.querySelectorAll('input').forEach(input => {
+                        input.required = isRequired;
                     });
                 });
             }
-
-            // Initialize insurance fields
+            hasInsuranceCheckbox.addEventListener('change', toggleInsuranceFields);
             toggleInsuranceFields();
 
-            // Form submission
-            const form = document.getElementById('quick-appointment-form');
+            // Form elements
             const submitBtn = document.getElementById('submit-btn');
             const alertsContainer = document.getElementById('appointment-alerts');
             const loadingOverlay = document.getElementById('loading-overlay');
 
-            // Show and hide loading functions
+            // Validation functions
+            function validateTime(timeString) {
+                const timeRegex = /^(1[0-2]|0?[1-9]):[0-5][0-9] (AM|PM)$/i;
+                return timeRegex.test(timeString);
+            }
+
+            function clearErrors() {
+                alertsContainer.style.display = 'none';
+                alertsContainer.innerHTML = '';
+                document.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
+                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            }
+
+            function displayErrors(errors) {
+                Object.entries(errors).forEach(([field, messages]) => {
+                    const input = document.querySelector(`[name="${field}"]`);
+                    const errorElement = document.getElementById(`${field}-error`);
+
+                    if (input && errorElement) {
+                        input.classList.add('is-invalid');
+                        errorElement.textContent = messages[0];
+                    }
+                });
+            }
+
+            function validateForm() {
+                let isValid = true;
+                clearErrors();
+
+                // Required fields validation
+                const requiredFields = [
+                    'first_name', 'last_name', 'email', 'phone',
+                    'service_type', 'appointment_type', 'preferred_date',
+                    'preferred_time', 'consent'
+                ];
+
+                requiredFields.forEach(field => {
+                    const element = document.querySelector(`[name="${field}"]`);
+                    if (!element) return;
+
+                    if (element.type === 'checkbox' ? !element.checked : !element.value.trim()) {
+                        isValid = false;
+                        element.classList.add('is-invalid');
+                        const errorElement = document.getElementById(`${field}-error`);
+                        if (errorElement) {
+                            errorElement.textContent = `Please provide ${element.labels?.[0]?.innerText.toLowerCase()}`;
+                        }
+                    }
+                });
+
+                // Special validation for service_type
+                const serviceType = document.getElementById('service_type');
+                if (!serviceType.value) {
+                    isValid = false;
+                    serviceType.classList.add('is-invalid');
+                    document.getElementById('service_type-error').textContent = 'Please select a service type';
+                }
+
+                // Time format validation
+                const timeInput = document.getElementById('preferred_time');
+                if (timeInput.value && !validateTime(timeInput.value)) {
+                    isValid = false;
+                    timeInput.classList.add('is-invalid');
+                    document.getElementById('preferred_time-error').textContent = 'Please select a valid time (format: HH:MM AM/PM)';
+                }
+
+                return isValid;
+            }
+
+            // Loading state handling
             function showLoading() {
                 loadingOverlay.classList.add('active');
+                submitBtn.disabled = true;
             }
 
             function hideLoading() {
                 loadingOverlay.classList.remove('active');
+                submitBtn.disabled = false;
             }
 
-            form.addEventListener('submit', function(e) {
+            // Form submission handler
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // Clear previous errors
-                clearErrors();
+                if (!validateForm()) {
+                    const firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalid.focus({ preventScroll: true });
+                    }
+                    return;
+                }
 
-                // Show loading indicator and disable button
                 showLoading();
-                submitBtn.disabled = true;
 
-                // Create form data
-                const formData = new FormData(form);
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch("{{ route('appointments.store') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
 
-                // Convert FormData to JSON
-                const jsonData = {};
-                formData.forEach((value, key) => {
-                    jsonData[key] = value;
-                });
+                    const data = await response.json();
 
-                // Send AJAX request
-                fetch('/appointments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(jsonData)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Hide loading and re-enable button
-                        hideLoading();
-                        submitBtn.disabled = false;
+                    if (!response.ok) throw data;
 
-                        if (data.success) {
-                            // Show success message
-                            alertsContainer.innerHTML = `
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ${data.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `;
-                            alertsContainer.style.display = 'block';
-
-                            // Reset form
-                            form.reset();
-
-                            // Redirect to thank you page after 3 seconds
-                            setTimeout(() => {
-                                window.location.href = "{{ route('appointments.thank-you') }}";
-                            }, 3000);
-                        } else {
-                            // Show error message
-                            alertsContainer.innerHTML = `
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        ${data.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `;
-                            alertsContainer.style.display = 'block';
-
-                            // Display validation errors
-                            if (data.errors) {
-                                displayErrors(data.errors);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        // Hide loading and re-enable button
-                        hideLoading();
-                        submitBtn.disabled = false;
-
-                        // Show error message
-                        alertsContainer.innerHTML = `
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    There was a problem submitting your form. Please try again.
+                    // Success handling
+                    alertsContainer.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ${data.message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             `;
-                        alertsContainer.style.display = 'block';
+                    alertsContainer.style.display = 'block';
 
-                        console.error('Error:', error);
-                    });
-            });
+                    form.reset();
+                    timePicker.clear();
 
-            // Display validation errors
-            function displayErrors(errors) {
-                for (const field in errors) {
-                    const errorElement = document.getElementById(`${field}-error`);
-                    if (errorElement) {
-                        errorElement.textContent = errors[field][0];
+                    setTimeout(() => {
+                        window.location.href = "{{ route('appointments.thank-you') }}";
+                    }, 2000);
 
-                        // Add invalid class to input
-                        const inputElement = document.getElementById(field);
-                        if (inputElement) {
-                            inputElement.classList.add('is-invalid');
-                        }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    alertsContainer.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ${error.message || 'An error occurred. Please try again.'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+                    alertsContainer.style.display = 'block';
+
+                    if (error.errors) {
+                        displayErrors(error.errors);
                     }
+                } finally {
+                    hideLoading();
                 }
-            }
-
-            // Clear all error messages
-            function clearErrors() {
-                // Clear alert container
-                alertsContainer.style.display = 'none';
-                alertsContainer.innerHTML = '';
-
-                // Clear field errors
-                const errorElements = document.querySelectorAll('.invalid-feedback');
-                errorElements.forEach(element => {
-                    element.textContent = '';
-                });
-
-                // Remove invalid class from inputs
-                const invalidInputs = document.querySelectorAll('.is-invalid');
-                invalidInputs.forEach(input => {
-                    input.classList.remove('is-invalid');
-                });
-            }
+            });
         });
     </script>
+
+    <style>
+        /* Fix for select element visibility */
+        select.form-control {
+            opacity: 1 !important;
+            position: relative !important;
+            -webkit-appearance: menulist !important;
+            -moz-appearance: menulist !important;
+            appearance: menulist !important;
+        }
+
+        /* Ensure invalid fields are visible */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+    </style>
 
 @endsection
